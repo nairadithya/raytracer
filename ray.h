@@ -8,9 +8,9 @@ typedef struct {
     vec3 dir;
 } ray;
 
-static point3 ray_at(ray *r, double t) {
-    vec3 scale = (vec3_scale(&(r->dir), t));
-    return vec3_add(&(r->orig), &scale);
+static inline point3 ray_at(ray r, double t) {
+    vec3 scale = (vec3_scale((r.dir), t));
+    return vec3_add(r.orig, scale);
 }
 
 #endif // RAY_H_
