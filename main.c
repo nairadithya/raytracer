@@ -1,8 +1,14 @@
 #include "colour.h"
 #include "ray.h"
+#include "vec3.h"
 #include <stdio.h>
 
-colour ray_colour(const ray r) { return make_colour(0.0, 0.0, 0.0); }
+colour ray_colour(const ray r) {
+    vec3 unit_direction = vec3_unit(r.dir);
+    float a = 0.5 * (unit_direction.y + 1);
+    return vec3_add(vec3_scale((colour){1.0, 1.0, 1.0}, (1.0 - a)),
+                    vec3_scale((colour){0.5, 0.9, 1.0}, a));
+}
 
 int main() {
     double aspect_ratio = 16.0 / 9.0;
@@ -32,11 +38,15 @@ int main() {
                  vec3_scale(vec3_add(pixel_delta_u, pixel_delta_v), 0.5));
 
     printf("P3\n %d %d\n255\n", image_width, image_height);
-    for (int j = 0; j < image_width; j++) {
+    for (int j = 0; j < image_height; j++) {
         fprintf(stderr, "Scanlines Remaining: %d\n", image_height - j);
-        for (int i = 0; i < image_height; i++) {
-            colour pixel_val = (colour){(double)i / (image_width - 1), 0,
-                                        (double)j / (image_height - 1)};
+        for (int i = 0; i < image_width; i++) {
+            vec3 pixel_center =
+                vec3_add(vec3_add(pixel100_loc, vec3_scale(pixel_delta_u, i)),
+                         vec3_scale(pixel_delta_v, j));
+            vec3 ray_direction = vec3_subtract(pixel_center, camera_center);
+            ray r = (ray){camera_center, ray_direction};
+            colour pixel_val = ray_colour(r);
             write_colour(pixel_val);
         }
     }
