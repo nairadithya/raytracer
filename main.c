@@ -24,7 +24,7 @@ colour ray_colour(const ray r) {
 
 int main() {
     double aspect_ratio = 16.0 / 9.0;
-    int image_width = 512;
+    int image_width = 1024;
     // Image Height Calculation based on Aspect Ratio
     int image_height = (int)(image_width / aspect_ratio);
     image_height = (image_height < 1) ? 1 : image_height;
@@ -43,9 +43,9 @@ int main() {
     vec3 pixel_delta_v = vec3_div(viewport_v, image_height);
 
     vec3 viewport_upper_left = vec3_subtract(
-        vec3_subtract(vec3_subtract(camera_center, (vec3){0, 0, focal_length}),
-                      vec3_scale(viewport_u, 0.5)),
-        vec3_scale(viewport_v, 0.5));
+					     vec3_subtract(vec3_subtract(camera_center, (vec3){0, 0, focal_length}),
+							   vec3_scale(viewport_u, 0.5)),
+					     vec3_scale(viewport_v, 0.5));
 
     vec3 pixel100_loc =
         vec3_add(viewport_upper_left,
