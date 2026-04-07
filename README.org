@@ -1,0 +1,7 @@
+* Raytracer In C
+
+This project is an effort to quickly get upto speed with C.
+
+I am following this textbook: [[https://raytracing.github.io/books/RayTracingInOneWeekend.html]]
+
+[[file:./image.ppm]]
