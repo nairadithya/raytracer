@@ -1,27 +1,11 @@
-#include "colour.h"
-#include "ray.h"
-#include "vec3.h"
-#include <math.h>
-#include <stdio.h>
+#include "sphere.h"
+#include "sphere_list.h"
+#include "weekend.h"
 
-float hit_sphere(point3 center, float radius, ray r) {
-    vec3 oc = vec3_subtract(center, r.orig);
-    float a = vec3_dot(r.dir, r.dir);
-    float b = -2.0 * vec3_dot(r.dir, oc);
-    float c = vec3_dot(oc, oc) - radius * radius;
-    float discriminant = b * b - 4 * a * c;
-    if (discriminant < 0) {
-        return -1.0;
-    } else {
-        return (-b - sqrtf(discriminant)) / (2.0 * a);
-    }
-}
-
-colour ray_colour(const ray r) {
-    float t = hit_sphere((point3){0, 0, -1}, 0.5, r);
-    if (t > 0.0) {
-        vec3 N = vec3_subtract(vec3_unit(ray_at(r, t)), (vec3){0, 0, -1});
-        return vec3_scale((colour){N.x + 1, N.y + 1, N.z + 1}, 0.5);
+colour ray_colour(ray r, sphere_list *world) {
+    hit_record rec;
+    if (sphere_list_hit(world, &r, 0, infinity, &rec)) {
+        return vec3_scale(vec3_add(rec.normal, (colour){1, 1, 1}), 0.5);
     }
 
     vec3 unit_direction = vec3_unit(r.dir);
@@ -36,6 +20,12 @@ int main() {
     // Image Height Calculation based on Aspect Ratio
     int image_height = (int)(image_width / aspect_ratio);
     image_height = (image_height < 1) ? 1 : image_height;
+
+    sphere_list world;
+
+    sphere_list_init(&world);
+    sphere_list_add(&world, (sphere){(point3){0, 0, -1}, 0.5});
+    sphere_list_add(&world, (sphere){(point3){0, -100.5, -1}, 100});
 
     // Camera stuff
     float focal_length = 1.0;
@@ -68,7 +58,7 @@ int main() {
                          vec3_scale(pixel_delta_v, j));
             vec3 ray_direction = vec3_subtract(pixel_center, camera_center);
             ray r = (ray){camera_center, ray_direction};
-            colour pixel_val = ray_colour(r);
+            colour pixel_val = ray_colour(r, &world);
             write_colour(pixel_val);
         }
     }

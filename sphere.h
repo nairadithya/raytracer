@@ -1,30 +1,36 @@
 #ifndef SPHERE_H_
 #define SPHERE_H_
 
-#include "ray.h"
-#include "vec3.h"
+#include "weekend.h"
 
-struct sphere {
+typedef struct {
     point3 center;
     double radius;
-};
+} sphere;
 
-struct hit_record {
+typedef struct {
     point3 p;
     vec3 normal;
     float t;
-};
+    int front_face;
+} hit_record;
 
-static int hit(sphere *s, const ray r, float ray_tmin, float ray_tmax,
-               hit_record rec) {
-    vec3 oc = vec3_subtract(s->center, r.orig);
-    float a = vec3_len_squared(r.dir);
-    float h = vec3_dot(r.dir, oc);
+static void set_face_normal(hit_record *hr, ray r, vec3 outward_normal) {
+    hr->front_face = vec3_dot(r.dir, outward_normal) < 0;
+    hr->normal =
+        hr->front_face ? outward_normal : vec3_scale(outward_normal, -1);
+}
+
+static int sphere_hit(sphere *s, ray *r, float ray_tmin, float ray_tmax,
+                      hit_record *rec) {
+    vec3 oc = vec3_subtract(s->center, r->orig);
+    float a = vec3_len_squared(r->dir);
+    float h = vec3_dot(r->dir, oc);
     float c = vec3_len_squared(oc) - s->radius * s->radius;
 
     float discriminant = h * h - a * c;
     if (discriminant < 0)
-        return false;
+        return 0;
 
     float sqrtd = sqrt(discriminant);
 
@@ -32,14 +38,16 @@ static int hit(sphere *s, const ray r, float ray_tmin, float ray_tmax,
     if (root <= ray_tmin || ray_tmax <= root) {
         root = (h + sqrtd) / a;
         if (root <= ray_tmin || ray_tmax <= root)
-            return false;
+            return 0;
     }
 
-    rec.t = root;
-    rec.p = ray_at(r, rec.t);
-    rec.normal = vec3_div(vec3_subtract(rec.p, s->center), s->radius);
+    rec->t = root;
+    rec->p = ray_at(r, rec->t);
+    vec3 outward_normal = vec3_div(vec3_subtract(rec->p, s->center), s->radius);
+    set_face_normal(rec, *r, outward_normal);
+    rec->normal = vec3_div(vec3_subtract(rec->p, s->center), s->radius);
 
-    return true;
+    return 1;
 }
 
 #endif // SPHERE_H_
