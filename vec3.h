@@ -13,15 +13,19 @@ static inline vec3 make_vec3(float x, float y, float z) {
 }
 
 static inline float vec3_len(vec3 a) {
-    return sqrt(pow(a.x, 2) + pow(a.y, 2) + pow(a.z, 2));
+    return sqrtf(a.x * a.x + a.y * a.y + a.z * a.z);
+}
+
+static inline float vec3_len_squared(vec3 a) {
+    return a.x * a.x + a.y * a.y + a.z * a.z;
 }
 
 static inline vec3 vec3_increment(vec3 a) {
-    return (vec3){a.x++, a.y++, a.z++};
+    return (vec3){a.x + 1, a.y + 1, a.z + 1};
 }
 
 static inline vec3 vec3_decrement(vec3 a) {
-    return (vec3){a.x--, a.y--, a.z--};
+    return (vec3){a.x - 1, a.y - 1, a.z - 1};
 }
 
 static inline vec3 vec3_add(vec3 a, vec3 b) {
