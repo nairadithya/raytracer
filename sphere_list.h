@@ -32,16 +32,17 @@ static void sphere_list_clear(sphere_list *list) {
     list->capacity = 0;
 }
 
-static int sphere_list_hit(sphere_list *list, ray *r, double tmin, double tmax,
+static int sphere_list_hit(sphere_list *list, ray *r, interval ray_t,
                            hit_record *rec) {
     hit_record temp_rec;
     int hit_anything = 0; // bool
-    float closest = tmax;
+    float closest_so_far = ray_t.max;
 
     for (int i = 0; i < list->count; i++) {
-        if (sphere_hit(&list->objects[i], r, tmin, closest, &temp_rec)) {
+        if (sphere_hit(&list->objects[i], r,
+                       (interval){ray_t.min, closest_so_far}, &temp_rec)) {
             hit_anything = 1;
-            closest = temp_rec.t;
+            closest_so_far = temp_rec.t;
             *rec = temp_rec;
         }
     }

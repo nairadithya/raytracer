@@ -21,8 +21,7 @@ static void set_face_normal(hit_record *hr, ray r, vec3 outward_normal) {
         hr->front_face ? outward_normal : vec3_scale(outward_normal, -1);
 }
 
-static int sphere_hit(sphere *s, ray *r, float ray_tmin, float ray_tmax,
-                      hit_record *rec) {
+static int sphere_hit(sphere *s, ray *r, interval ray_t, hit_record *rec) {
     vec3 oc = vec3_subtract(s->center, r->orig);
     float a = vec3_len_squared(r->dir);
     float h = vec3_dot(r->dir, oc);
@@ -35,9 +34,9 @@ static int sphere_hit(sphere *s, ray *r, float ray_tmin, float ray_tmax,
     float sqrtd = sqrt(discriminant);
 
     float root = (h - sqrtd) / a;
-    if (root <= ray_tmin || ray_tmax <= root) {
+    if (root <= ray_t.min || ray_t.min <= root) {
         root = (h + sqrtd) / a;
-        if (root <= ray_tmin || ray_tmax <= root)
+        if (root <= ray_t.min || ray_t.max <= root)
             return 0;
     }
 

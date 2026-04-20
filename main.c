@@ -1,10 +1,11 @@
 #include "sphere.h"
 #include "sphere_list.h"
 #include "weekend.h"
+#include <math.h>
 
 colour ray_colour(ray r, sphere_list *world) {
     hit_record rec;
-    if (sphere_list_hit(world, &r, 0, infinity, &rec)) {
+    if (sphere_list_hit(world, &r, (interval){0, INFINITY}, &rec)) {
         return vec3_scale(vec3_add(rec.normal, (colour){1, 1, 1}), 0.5);
     }
 
@@ -20,7 +21,6 @@ int main() {
     // Image Height Calculation based on Aspect Ratio
     int image_height = (int)(image_width / aspect_ratio);
     image_height = (image_height < 1) ? 1 : image_height;
-
     sphere_list world;
 
     sphere_list_init(&world);
