@@ -40,8 +40,8 @@ static int sphere_list_hit(sphere_list *list, ray *r, interval ray_t,
     float closest_so_far = ray_t.max;
 
     for (int i = 0; i < list->count; i++) {
-        if (sphere_hit(&list->objects[i], r, ray_t.min, closest_so_far,
-                       &temp_rec)) {
+        if (sphere_hit(&list->objects[i], r,
+                       (interval){ray_t.min, closest_so_far}, &temp_rec)) {
             hit_anything = 1;
             closest_so_far = temp_rec.t;
             *rec = temp_rec;
