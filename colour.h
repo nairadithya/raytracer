@@ -1,6 +1,7 @@
 #ifndef COLOUR_H_
 #define COLOUR_H_
 
+#include "interval.h"
 #include "vec3.h"
 
 typedef vec3 colour;
@@ -14,9 +15,11 @@ static inline void write_colour(colour pixel_colour) {
     float g = pixel_colour.y;
     float b = pixel_colour.z;
 
-    int rbyte = (int)(255.999 * r);
-    int gbyte = (int)(255.999 * g);
-    int bbyte = (int)(255.999 * b);
+    interval intensity = (interval){0.0, 0.999};
+
+    int rbyte = (int)(255.999 * interval_clamp(intensity, r));
+    int gbyte = (int)(255.999 * interval_clamp(intensity, g));
+    int bbyte = (int)(255.999 * interval_clamp(intensity, b));
 
     printf("%d %d %d\n", rbyte, gbyte, bbyte);
 }

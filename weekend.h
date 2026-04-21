@@ -3,6 +3,7 @@
 
 #include <math.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 const float infinity = INFINITY;
 const float pi = 3.1415926535897932385;

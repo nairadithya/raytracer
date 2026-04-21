@@ -29,4 +29,12 @@ static inline interval interval_universe(void) {
     return (interval){-INFINITY, +INFINITY};
 }
 
+static inline float interval_clamp(interval i, float x) {
+    if (x < i.min)
+        return i.min;
+    if (x > i.max)
+        return i.max;
+    return x;
+}
+
 #endif // INTERVAL_H_
